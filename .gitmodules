@@ -1,18 +1,18 @@
-[submodule "ips/timer_module"]
-	path = ips/timer_module
-	url = git@github.com:Panda-Cores/timer_module.git
-[submodule "ips/load_store_unit"]
-	path = ips/load_store_unit
-	url = git@github.com:Panda-Cores/load_store_unit.git
-[submodule "ips/wishbone"]
-	path = ips/wishbone
-	url = git@github.com:Panda-Cores/wishbone.git
-[submodule "ips/debug_module"]
-	path = ips/debug_module
-	url = git@github.com:Panda-Cores/debug_module.git
 [submodule "ips/caches"]
 	path = ips/caches
-	url = git@github.com:Panda-Cores/caches.git
+	url = ../panda_cache
+[submodule "ips/lsu"]
+	path = ips/lsu
+	url = ../panda_lsu
+[submodule "ips/wishbone"]
+	path = ips/wishbone
+	url = ../panda_wishbone
+[submodule "ips/timer_module"]
+	path = ips/timer_module
+	url = ../panda_timer
 [submodule "ips/gpio_module"]
 	path = ips/gpio_module
-	url = git@github.com:Panda-Cores/gpio_module.git
+	url = ../panda_gpio
+[submodule "ips/debug_module"]
+	path = ips/debug_module
+	url = ../panda_debug
