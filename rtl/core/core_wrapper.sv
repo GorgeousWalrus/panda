@@ -19,6 +19,9 @@
 
 /* verilator lint_off PINMISSING */
 
+`include "wb_intf.sv"
+`include "dbg_intf.sv"
+
 module core_wrapper
 (
     input wire          clk,
@@ -48,11 +51,11 @@ logic dbg_core_rst_req;
 logic dbg_periph_rst_req;
 
 // Wishbone busses
-wb_bus_t#(.TAGSIZE(1)) masters[4];
-wb_bus_t#(.TAGSIZE(1)) slaves[4];
+wb_bus_t#() masters[3:0]();
+wb_bus_t#() slaves[3:0]();
 
 // Debug bus
-dbg_intf dbg_bus;
+dbg_intf dbg_bus();
 
 // Reset requests
 assign core_rst_reqn  = (~dbg_core_rst_req) & rstn_i;
@@ -85,9 +88,9 @@ dbg_module dbg_module_i (
 
 
 `define ROM_START_ADDR 32'h0
-`define ROM_END_ADDR 32'h4000
-`define RAM_START_ADDR 32'h4000
-`define RAM_END_ADDR 32'h8000
+`define ROM_END_ADDR 32'h800
+`define RAM_START_ADDR 32'h800
+`define RAM_END_ADDR 32'hc00
 `define TIMER_START_ADDR 32'h8000
 `define TIMER_END_ADDR 32'h8100
 `define GPIO_START_ADDR 32'h8100
@@ -95,7 +98,7 @@ dbg_module dbg_module_i (
 
 // Not really a rom, just the name so far...
 wb_ram_wrapper #(
-  .SIZE (16384)
+  .SIZE (2048)
 ) rom_i (
   .clk    ( clk       ),
   .rstn_i ( rstn_i    ),
@@ -103,7 +106,7 @@ wb_ram_wrapper #(
 );
 
 wb_ram_wrapper #(
-  .SIZE (16384)
+  .SIZE (1024)
 ) ram_i (
   .clk    ( clk       ),
   .rstn_i ( rstn_i    ),

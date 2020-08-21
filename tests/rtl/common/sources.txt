@@ -23,9 +23,9 @@
 ../../ips/wishbone/src/wb_slave.sv
 -I../../ips/wishbone/includes
 
-../../ips/load_store_unit/src/load_unit.sv
-../../ips/load_store_unit/src/store_unit.sv
-../../ips/load_store_unit/src/lsu.sv
+../../ips/lsu/src/load_unit.sv
+../../ips/lsu/src/store_unit.sv
+../../ips/lsu/src/lsu.sv
 
 ../../ips/debug_module/src/dbg_module.sv
 ../../ips/debug_module/src/core_dbg_module.sv
