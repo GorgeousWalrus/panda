@@ -68,7 +68,7 @@ assign dbg_pc_o = pc_q;
 `ifdef INSTR_CACHE
     cache#(
         .N_WORDS_PER_LINE ( 8  ),
-        .N_LINES          ( 32 )
+        .N_LINES          ( 2 )
     ) icache_i (
         .clk        ( clk       ),
         .rstn_i     ( rstn_i    ),

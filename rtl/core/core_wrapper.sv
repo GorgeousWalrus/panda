@@ -19,6 +19,9 @@
 
 /* verilator lint_off PINMISSING */
 
+`include "dbg_intf.sv"
+`include "wb_intf.sv"
+
 module core_wrapper
 (
     input wire          clk,
@@ -48,11 +51,11 @@ logic dbg_core_rst_req;
 logic dbg_periph_rst_req;
 
 // Wishbone busses
-wb_bus_t#(.TAGSIZE(1)) masters[4];
-wb_bus_t#(.TAGSIZE(1)) slaves[4];
+wb_bus_t#(.TAGSIZE(1)) masters[3:0]();
+wb_bus_t#(.TAGSIZE(1)) slaves[3:0]();
 
 // Debug bus
-dbg_intf dbg_bus;
+dbg_intf dbg_bus();
 
 // Reset requests
 assign core_rst_reqn  = (~dbg_core_rst_req) & rstn_i;
