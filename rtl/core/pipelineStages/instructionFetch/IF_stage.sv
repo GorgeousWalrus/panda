@@ -116,7 +116,7 @@ begin
     if(ack_i)
         data_n.valid = 1'b0;
 
-    if((!data_q.valid || ack_i)) begin
+    if((!data_q.valid || ack_i) && !halt_i) begin
         read = 1'b1;
         if(read_valid) begin
             data_n         = {1'b1, mem_data, pc_q, pred_br};

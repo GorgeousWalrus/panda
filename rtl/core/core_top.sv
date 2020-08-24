@@ -129,7 +129,7 @@ end
 
 core_dbg_module core_dbg_i (
     .clk        ( clk           ),
-    .rstn_i     ( rstn_i        ),
+    .rstn_i     ( 1'b1          ),
     .dbg_bus    ( dbg_bus       ),
     .halt_core_o( halt_core     ),
     .rs_o       ( dbg_rs        ),

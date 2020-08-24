@@ -60,13 +60,13 @@ dbg_intf dbg_bus();
 
 // Reset requests
 // TODO This is faulty!
-assign core_rst_req   = !((~dbg_core_rst_req) & rstn_i & core_rst_reqn);
+assign core_rst_req   = ((~dbg_core_rst_req) & rstn_i);
 assign periph_rst_req = (~dbg_periph_rst_req) & rstn_i;
 
 core_top core_i
 (
     .clk            ( clk           ),
-    .rstn_i         ( rstn_i        ),
+    .rstn_i         ( core_rst_req  ),
     .rst_reqn_o     ( core_rst_reqn ),
     .IF_wb_bus      ( masters[3]    ),
     .MEM_wb_bus_c   ( masters[2]    ),

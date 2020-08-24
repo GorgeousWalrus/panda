@@ -234,12 +234,13 @@ template<class MODULE>	class TESTBENCH {
 			this->reset();
 			// Halt the core
 			this->halt_core();
+			this->reset_core();
 			
 			// Load the program into memory
-    		this->load_program(program, instr_cnt, startAddr);
+			this->load_program(program, instr_cnt, startAddr);
 
 			// Set core to start of program
-    		this->set_pc(0x0);
+			this->set_pc(0x0);
 
 			// Start the program
 			this->resume_core();
