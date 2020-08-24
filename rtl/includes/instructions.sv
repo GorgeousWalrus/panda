@@ -8,5 +8,4 @@
 `define JALR        7'b1100111
 `define AUIPC       7'b0010111
 `define FENCE       7'b0001111
-`define ECALL       7'b1110011
-`define EBREAK      7'b1110011
+`define EINST       7'b1110011

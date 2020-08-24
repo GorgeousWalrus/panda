@@ -30,16 +30,20 @@ module branch_predictor(
 );
 
 logic [31:0] imm;
+logic [31:0] pc;
+
+assign pc_o = pc;
 
 assign imm = {{19{instr_i[31]}}, instr_i[31], instr_i[7], instr_i[30 : 25], instr_i[11:8], 1'b0};
 
 always_comb
 begin
+    pc = 'b0;
     branch = 1'b0;
     // If instr_i[31] is set, the offset is negative
     if(instr_i[6:0] == `BRANCH && instr_i[31]) begin
-            branch = 1'b1;
-            pc_o = pc_i + imm;
+            branch  = 1'b1;
+            pc      = pc_i + imm;
         end
 end
 

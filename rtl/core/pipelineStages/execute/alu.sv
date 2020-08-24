@@ -28,16 +28,18 @@ module alu
     output logic        overflow_o
 );
 /* verilator lint_off UNOPTFLAT */
-    logic [31:0]         result;
+logic [31:0]         result;
 /* verilator lint_on UNOPTFLAT */
-    logic                           overflow;
+logic                           overflow;
 
-    assign R_o = result[31:0];
-    assign overflow_o = overflow;
+assign R_o = result[31:0];
+assign overflow_o = overflow;
 
-    
 
-    always_comb
+
+always_comb
+begin
+    overflow = 'b0;
     case(operation_i)
         `ADDITION :
             {overflow, result} = $signed(A_i) + $signed(B_i);
@@ -60,4 +62,5 @@ module alu
         default :
             result = 'b0;
     endcase;
+end
 endmodule

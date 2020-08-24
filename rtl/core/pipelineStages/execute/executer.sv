@@ -47,6 +47,7 @@ begin
     alu_d1_mux      = 1'b0;
     alu_d0_mux      = 1'b0;
     branch_taken    = 1'b0;
+    operation       = 'b0;
 
     case(instr[6:0])
         `LUI, `LOAD, `STORE: begin
@@ -102,7 +103,7 @@ begin
         end
 
         /* verilator lint_off CASEOVERLAP */
-        `FENCE, `ECALL, `EBREAK: begin
+        `FENCE, `EINST: begin
             // As of now, just NOPs
             operation = `ADDITION;
         end

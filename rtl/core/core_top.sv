@@ -110,12 +110,13 @@ assign IF_pc = (dbg_flush) ? dbg_pc : EX_MEM_result;
 always_comb
 begin
     // If not halted, mux to core (ID & WB)
-    REG_rd = WB_REG_rd;
-    REG_rdd = WB_REG_data;
-    REG_rs1 = ID_REG_rs1;
-    REG_rs2 = ID_REG_rs2;
+    REG_rd       = WB_REG_rd;
+    REG_rdd      = WB_REG_data;
+    REG_rs1      = ID_REG_rs1;
+    REG_rs2      = ID_REG_rs2;
     REG_ID_rs1_d = REG_rs1_d;
     REG_ID_rs2_d = REG_rs2_d;
+    dbg_rsd      = 'b0;
 
     // If halted, mux to debug module
     if(halt_core) begin

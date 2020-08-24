@@ -87,16 +87,14 @@ begin
         `AUIPC: begin
             imm = {instr[31:12], 12'b0};
         end
-        /* verilator lint_off CASEOVERLAP */
-        // TODO EBREAK and ECALL have the same opcode as JALR?!
-        `FENCE, `ECALL, `EBREAK: begin
+
+        `FENCE, `EINST: begin
             // As of now, just NOPs
             rs1 = 5'b0;
             rs2 = 5'b0;
             rd  = 5'b0;
             imm = 'b0;
         end
-        /* verilator lint_on CASEOVERLAP */
         
         default: begin
             invalid = 1'b1;

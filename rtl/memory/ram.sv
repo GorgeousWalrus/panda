@@ -33,6 +33,7 @@ module ram #(
 /* verilator lint_off WIDTH */
 always_comb
 begin
+    dout_o = 'b0;
     if(en_i)
         dout_o = data[addr_i];
 end
