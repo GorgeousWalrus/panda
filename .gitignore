@@ -2,6 +2,7 @@
 /**/obj_dir
 /**/build
 /**/*.hex*
+/ips/**/ip
 *.sim
 *.runs
 *.hbs

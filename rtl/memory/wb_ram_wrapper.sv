@@ -18,21 +18,23 @@
 
 /* verilator lint_off PINMISSING */
 module wb_ram_wrapper #(
-    parameter SIZE = 1024
+    parameter DEPTH = 1024,
+    parameter WORD_WIDTH = 32,
+    parameter ADDR_WIDTH = 32
 )(
     input logic             clk,
     input logic             rstn_i,
     wb_bus_t.slave          wb_bus
 );
 
-logic [31:0]    ram_wb_d;
-logic [31:0]    wb_ram_d;
-logic [31:0]    addr;
-logic           wb_we;
-logic [3:0]     wb_sel;
-logic [3:0]     ram_we;
+logic [WORD_WIDTH-1:0]  ram_wb_d;
+logic [WORD_WIDTH-1:0]  wb_ram_d;
+logic [ADDR_WIDTH-1:0]  addr;
+logic                   wb_we;
+logic [3:0]             wb_sel;
+logic                   ram_we;
 
-assign ram_we = (wb_we) ? wb_sel : 4'b0;
+assign ram_we = wb_we;
 
 wb_slave #(
     .TAGSIZE    ( 1         )
@@ -49,11 +51,14 @@ wb_slave #(
 );
 
 ram #(
-    .SIZE (SIZE)
+    .DEPTH      (DEPTH),
+    .WORD_WIDTH (WORD_WIDTH)
 )ram_i(
     .clk    ( clk       ),
     .rstn_i ( rstn_i    ),
-    .addr_i ( addr      ),
+    /* verilator lint_off WIDTH */
+    .addr_i ( addr[$clog2(DEPTH)+1:2]),
+    /* verilator lint_on WIDTH */
     .en_i   ( 1'b1      ),
     .we_i   ( ram_we    ),
     .din_i  ( wb_ram_d  ),

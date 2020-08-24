@@ -88,6 +88,7 @@ begin
             imm = {instr[31:12], 12'b0};
         end
         /* verilator lint_off CASEOVERLAP */
+        // TODO EBREAK and ECALL have the same opcode as JALR?!
         `FENCE, `ECALL, `EBREAK: begin
             // As of now, just NOPs
             rs1 = 5'b0;

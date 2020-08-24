@@ -30,7 +30,7 @@ module core_top (
     wb_bus_t.master      MEM_wb_bus_c,
     wb_bus_t.master      MEM_wb_bus_lsu,
 // Debug bus
-    dbg_intf             dbg_bus
+    dbg_intf.dut         dbg_bus
 );
 
 assign rst_reqn_o = rstn_i;

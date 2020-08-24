@@ -40,6 +40,7 @@ module core_wrapper
 
 // Reset signals
 logic core_rst_reqn;
+logic core_rst_req;
 logic periph_rst_req;
 
 // interrupts
@@ -58,7 +59,8 @@ wb_bus_t#(.TAGSIZE(1)) slaves[3:0]();
 dbg_intf dbg_bus();
 
 // Reset requests
-assign core_rst_reqn  = (~dbg_core_rst_req) & rstn_i;
+// TODO This is faulty!
+assign core_rst_req   = !((~dbg_core_rst_req) & rstn_i & core_rst_reqn);
 assign periph_rst_req = (~dbg_periph_rst_req) & rstn_i;
 
 core_top core_i
@@ -98,7 +100,7 @@ dbg_module dbg_module_i (
 
 // Not really a rom, just the name so far...
 wb_ram_wrapper #(
-  .SIZE (16384)
+  .DEPTH (16384)
 ) rom_i (
   .clk    ( clk       ),
   .rstn_i ( rstn_i    ),
@@ -106,7 +108,7 @@ wb_ram_wrapper #(
 );
 
 wb_ram_wrapper #(
-  .SIZE (16384)
+  .DEPTH (16384)
 ) ram_i (
   .clk    ( clk       ),
   .rstn_i ( rstn_i    ),

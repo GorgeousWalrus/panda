@@ -62,6 +62,8 @@ logic lsu_valid;
 logic ls_valid;
 logic ls_valid_n, ls_valid_q;
 logic [31:0] lu_data;
+logic [31:0] lsu_data;
+logic [31:0] c_data;
 logic [3:0] lsu_we;
 
 //TODO error code
@@ -99,7 +101,7 @@ cache#(
     .we_i       ( lsu_we        ),
     .addr_i     ( result_i      ),
     .data_i     ( rs2_i         ),
-    .data_o     ( lu_data       ),
+    .data_o     ( c_data       ),
     .valid_o    ( cache_valid   ),
     .wb_bus     ( wb_bus_c      )
 );
@@ -112,7 +114,7 @@ lsu lsu_i(
     .we_i       ( lsu_we    ),
     .addr_i     ( result_i  ),
     .data_i     ( rs2_i     ),
-    .data_o     ( lu_data   ),
+    .data_o     ( lsu_data   ),
     .valid_o    ( lsu_valid ),
     .wb_bus     ( wb_bus_lsu)
 );
@@ -230,6 +232,11 @@ always_ff @(posedge clk, negedge rstn_i) begin
     end else if(!halt_i) begin
         data_q <= data_n;
         ls_valid_q <= ls_valid_n;
+        unique if(lsu_load)
+            lu_data <= lsu_data;
+        else if(cache_load)
+            lu_data <= c_data;
+        else begin end
     end
 end
 
