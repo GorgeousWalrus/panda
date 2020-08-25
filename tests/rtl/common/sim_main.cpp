@@ -4,17 +4,17 @@
 
 
 int main(int argc, char** argv, char** env) {
+    int result = 0;
     TESTBENCH<Vtestbench> *tb;
     Verilated::commandArgs(argc, argv);
+
     tb = new TESTBENCH<Vtestbench>();
     tb->opentrace("logs/trace.vcd");
 
-    int result = 0;
-
     tb->load_program((char*) "main.hex", 0x0);
 
-    for(int i = 0; i < 100; i++){
-        for(int j = 0; j < 5000; j++)
+    for(int i = 0; i < 50; i++){
+        for(int j = 0; j < 10000; j++)
             tb->tick();
         if(tb->read_mem(0x7ff0) != 0)
             break;

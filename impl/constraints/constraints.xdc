@@ -1,4 +1,4 @@
 # CLK
-create_clock -period 10 -name sys_clk [get_nets -hierarchical -filter {NAME =~ clk}]
+create_clock -period 20 -name sys_clk [get_nets -hierarchical -filter {NAME =~ clk}]
 
 # PINS

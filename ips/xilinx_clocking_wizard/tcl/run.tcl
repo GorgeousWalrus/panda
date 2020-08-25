@@ -6,6 +6,7 @@ create_ip  -vlnv xilinx.com:ip:clk_wiz:6.0 -module_name xilinx_clocking_wizard
 
 set_property -dict [list \
   CONFIG.PRIMITIVE {PLL} \
+  CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {50.000} \
   CONFIG.CLKOUT1_DRIVES {BUFG} \
   CONFIG.CLKOUT2_DRIVES {BUFG} \
   CONFIG.CLKOUT3_DRIVES {BUFG} \
@@ -14,11 +15,12 @@ set_property -dict [list \
   CONFIG.CLKOUT6_DRIVES {BUFG} \
   CONFIG.CLKOUT7_DRIVES {BUFG} \
   CONFIG.MMCM_BANDWIDTH {OPTIMIZED} \
-  CONFIG.MMCM_CLKFBOUT_MULT_F {9} \
+  CONFIG.MMCM_DIVCLK_DIVIDE {2} \
+  CONFIG.MMCM_CLKFBOUT_MULT_F {17} \
   CONFIG.MMCM_COMPENSATION {ZHOLD} \
-  CONFIG.MMCM_CLKOUT0_DIVIDE_F {9} \
-  CONFIG.CLKOUT1_JITTER {137.681} \
-  CONFIG.CLKOUT1_PHASE_ERROR {105.461} \
+  CONFIG.MMCM_CLKOUT0_DIVIDE_F {17} \
+  CONFIG.CLKOUT1_JITTER {203.457} \
+  CONFIG.CLKOUT1_PHASE_ERROR {155.540} \
   ] [get_ips xilinx_clocking_wizard]
 
 generate_target all [get_files .xilinx_clocking_wizard.srcs/sources_1/ip/xilinx_clocking_wizard/xilinx_clocking_wizard.xci]

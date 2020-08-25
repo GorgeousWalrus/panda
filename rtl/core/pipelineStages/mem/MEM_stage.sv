@@ -50,7 +50,6 @@ struct packed {
     logic [31:0]    instr;
     logic [31:0]    data;
 } data_n, data_q;
-
 logic load;
 logic store;
 logic cache_load;
@@ -75,10 +74,18 @@ assign instr_o = data_q.instr;
 
 assign ls_valid = lsu_valid | cache_valid;
 
+`define DCACHE
+
 c_region_sel#(
+`ifdef DCACHE
     .N_C_REGIONS    ( 1         ),
     .C_REGION_START ( 32'h0     ),
     .C_REGION_END   ( 32'h7000  )
+`else
+    .N_C_REGIONS    ( 1         ),
+    .C_REGION_START ( 32'hffffffff ),
+    .C_REGION_END   ( 32'hffffffff )
+`endif
 ) c_region_sel_i (
     .load_i         ( load          ),
     .store_i        ( store         ),
@@ -90,49 +97,34 @@ c_region_sel#(
     .error_o        ( error         )
 );
 
-cache#(
-    .N_WORDS_PER_LINE ( 8  ),
-    .N_LINES          ( 2 )
-) dcache_i (
-    .clk        ( clk           ),
-    .rstn_i     ( rstn_i        ),
-    .read_i     ( cache_load    ),
-    .write_i    ( cache_store   ),
-    .we_i       ( lsu_we        ),
-    .addr_i     ( result_i      ),
-    .data_i     ( rs2_i         ),
-    .data_o     ( c_data       ),
-    .valid_o    ( cache_valid   ),
-    .wb_bus     ( wb_bus_c      )
-);
+    cache#(
+        .N_WORDS_PER_LINE ( 8  ),
+        .N_LINES          ( 16 )
+    ) dcache_i (
+        .clk        ( clk           ),
+        .rstn_i     ( rstn_i        ),
+        .read_i     ( cache_load    ),
+        .write_i    ( cache_store   ),
+        .we_i       ( lsu_we        ),
+        .addr_i     ( result_i      ),
+        .data_i     ( rs2_i         ),
+        .data_o     ( c_data       ),
+        .valid_o    ( cache_valid   ),
+        .wb_bus     ( wb_bus_c      )
+    );
 
-lsu lsu_i(
-    .clk        ( clk       ),
-    .rstn_i     ( rstn_i    ),
-    .read_i     ( lsu_load  ),
-    .write_i    ( lsu_store ),
-    .we_i       ( lsu_we    ),
-    .addr_i     ( result_i  ),
-    .data_i     ( rs2_i     ),
-    .data_o     ( lsu_data   ),
-    .valid_o    ( lsu_valid ),
-    .wb_bus     ( wb_bus_lsu)
-);
-
-`ifdef NO_DCACHE
     lsu lsu_i(
         .clk        ( clk       ),
         .rstn_i     ( rstn_i    ),
-        .read_i     ( load      ),
-        .write_i    ( store     ),
+        .read_i     ( lsu_load  ),
+        .write_i    ( lsu_store ),
         .we_i       ( lsu_we    ),
         .addr_i     ( result_i  ),
         .data_i     ( rs2_i     ),
-        .data_o     ( lu_data   ),
-        .valid_o    ( ls_valid ),
-        .wb_bus     ( wb_bus    )
+        .data_o     ( lsu_data   ),
+        .valid_o    ( lsu_valid ),
+        .wb_bus     ( wb_bus_lsu)
     );
-`endif
 
 always_comb
 begin

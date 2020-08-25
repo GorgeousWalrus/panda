@@ -24,7 +24,7 @@
 
 module core_wrapper
 (
-    input wire          clk,
+    input wire          sys_clk_i,
     input wire          rstn_i,
     // GPIO
     output wire [7:0]   gpio_dir_o,
@@ -65,7 +65,7 @@ assign periph_rst_req = (~dbg_periph_rst_req) & rstn_i;
 
 core_top core_i
 (
-    .clk            ( clk           ),
+    .clk            ( sys_clk_i     ),
     .rstn_i         ( core_rst_req  ),
     .rst_reqn_o     ( core_rst_reqn ),
     .IF_wb_bus      ( masters[3]    ),
@@ -75,7 +75,7 @@ core_top core_i
 );
 
 dbg_module dbg_module_i (
-  .clk              ( clk               ),
+  .clk              ( sys_clk_i         ),
   .rstn_i           ( rstn_i            ),
   .cmd_i            ( dbg_cmd_i         ),
   .addr_i           ( dbg_addr_i        ),
@@ -102,7 +102,7 @@ dbg_module dbg_module_i (
 wb_ram_wrapper #(
   .DEPTH (16384)
 ) rom_i (
-  .clk    ( clk       ),
+  .clk    ( sys_clk_i ),
   .rstn_i ( rstn_i    ),
   .wb_bus ( slaves[0] )
 );
@@ -110,7 +110,7 @@ wb_ram_wrapper #(
 wb_ram_wrapper #(
   .DEPTH (16384)
 ) ram_i (
-  .clk    ( clk       ),
+  .clk    ( sys_clk_i ),
   .rstn_i ( rstn_i    ),
   .wb_bus ( slaves[1] )
 );
@@ -120,7 +120,7 @@ wb_xbar #(
     .N_SLAVE        ( 4 ),
     .N_MASTER       ( 4 )
 ) wb_xbar_i (
-    .clk_i          ( clk       ),
+    .clk_i          ( sys_clk_i ),
     .rst_i          ( ~rstn_i   ),
     .SSTART_ADDR    ({`GPIO_START_ADDR, `TIMER_START_ADDR, `RAM_START_ADDR, `ROM_START_ADDR}),
     .SEND_ADDR      ({`GPIO_END_ADDR,   `TIMER_END_ADDR,   `RAM_END_ADDR,   `ROM_END_ADDR}),
@@ -129,7 +129,7 @@ wb_xbar #(
 );
 
 timer timer_i(
-  .clk      ( clk            ),
+  .clk      ( sys_clk_i      ),
   .rstn_i   ( periph_rst_req ),
   .irq_o    ( timer_irqs     ),
   .wb_bus   ( slaves[2]      )
@@ -138,7 +138,7 @@ timer timer_i(
 gpio_module #(
   .N_GPIOS ( 8 )
 ) gpio_i (
-  .clk      ( clk         ),
+  .clk      ( sys_clk_i   ),
   .rstn_i   ( rstn_i      ),
   .dir_o    ( gpio_dir_o  ),
   .val_o    ( gpio_val_o  ),

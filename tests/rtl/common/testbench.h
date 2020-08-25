@@ -47,10 +47,10 @@ template<class MODULE>	class TESTBENCH {
 		}
 
 		virtual void	reset(void) {
-			m_core->rstn_i = 0;
+			m_core->ext_rstn_i = 0;
 			for(int i = 0; i < 4; i++)
 				this->tick();
-			m_core->rstn_i = 1;
+			m_core->ext_rstn_i = 1;
 		}
 
 		virtual void	tick(void) {
@@ -60,19 +60,19 @@ template<class MODULE>	class TESTBENCH {
 			// Make sure any combinatorial logic depending upon
 			// inputs that may have changed before we called tick()
 			// has settled before the rising edge of the clock.
-			m_core->clk = 0;
+			m_core->ext_clk_i = 0;
 			m_core->eval();
 
 			if(m_trace) m_trace->dump(10*m_tickcount-2);
 
 			// Toggle the clock
 			// Rising edge
-			m_core->clk = 1;
+			m_core->ext_clk_i = 1;
 			m_core->eval();
 			if(m_trace) m_trace->dump(10*m_tickcount);
 
 			// Falling edge
-			m_core->clk = 0;
+			m_core->ext_clk_i = 0;
 			m_core->eval();
 
 			if (m_trace) {

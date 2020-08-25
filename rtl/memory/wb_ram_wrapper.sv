@@ -27,43 +27,51 @@ module wb_ram_wrapper #(
     wb_bus_t.slave          wb_bus
 );
 
-logic [WORD_WIDTH-1:0]  ram_wb_d;
-logic [WORD_WIDTH-1:0]  wb_ram_d;
-logic [ADDR_WIDTH-1:0]  addr;
-logic                   wb_we;
-logic [3:0]             wb_sel;
-logic                   ram_we;
+logic [31:0]        ram_wb_data;  // data out
+logic               ram_en;
+logic               wb_ack_n, wb_ack_q;
 
-assign ram_we = wb_we;
 
-wb_slave #(
-    .TAGSIZE    ( 1         )
-)wb_slave_i(
-    .clk_i      ( clk       ),
-    .rst_i      ( ~rstn_i   ),
-    .data_i     ( ram_wb_d  ),
-    .data_o     ( wb_ram_d  ),
-    .addr_o     ( addr      ),
-    .we_o       ( wb_we     ),
-    .sel_o      ( wb_sel    ),
-    .valid_i    ( 1'b1      ),
-    .wb_bus     ( wb_bus    )
-);
+assign wb_bus.wb_dat_sm = ram_wb_data;
+assign wb_bus.wb_tgd_sm = 'b0;
+assign wb_bus.wb_ack    = wb_ack_q;
+assign wb_bus.wb_err    = 'b0;
+assign wb_bus.wb_rty    = 'b0;
+
+always_comb
+begin
+    wb_ack_n = 'b0;
+    ram_en   = 1'b0;
+
+    if(wb_bus.wb_cyc) begin
+        ram_en   = 1'b1;
+        if(!wb_ack_q)
+            wb_ack_n = 1'b1;
+    end
+end
+
+always_ff @(posedge clk, negedge rstn_i)
+begin
+    if(!rstn_i) begin
+        wb_ack_q <= 1'b0;
+    end else begin
+        wb_ack_q <= wb_ack_n;
+    end
+end
 
 ram #(
     .DEPTH      (DEPTH),
     .WORD_WIDTH (WORD_WIDTH)
 )ram_i(
-    .clk    ( clk       ),
-    .rstn_i ( rstn_i    ),
-    /* verilator lint_off WIDTH */
-    .addr_i ( addr[$clog2(DEPTH)+1:2]),
-    /* verilator lint_on WIDTH */
-    .en_i   ( 1'b1      ),
-    .we_i   ( ram_we    ),
-    .din_i  ( wb_ram_d  ),
-    .dout_o ( ram_wb_d  )
+    .clk    ( clk              ),
+    .rstn_i ( rstn_i           ),
+    .addr_i ( wb_bus.wb_adr[$clog2(DEPTH)+1:2]),
+    .en_i   ( ram_en           ),
+    .we_i   ( wb_bus.wb_we     ),
+    .din_i  ( wb_bus.wb_dat_ms ),
+    .dout_o ( ram_wb_data      )
 );
+
 
 endmodule
 /* verilator lint_on PINMISSING */

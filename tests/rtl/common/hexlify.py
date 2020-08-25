@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-hexdmp = open("main.hex.dmp", 'r')
+hexdmp = open("build/main.hex.dmp", 'r')
 nicehex = open("main.hex", 'w')
 
 newline=''

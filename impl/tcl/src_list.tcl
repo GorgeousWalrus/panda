@@ -32,8 +32,6 @@ set CACHE " \
 
 set WISHBONE " \
     $IPS/wishbone/src/wb_xbar.sv \
-    $IPS/wishbone/src/wb_slave.sv \
-    $IPS/wishbone/src/wb_master.sv \
 "
 
 set DBG_MODULE " \

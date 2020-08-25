@@ -16,8 +16,8 @@
 // ------------------------------------------------------------
 
 module testbench(
-    input wire          clk,
-    input wire          rstn_i,
+    input wire          ext_clk_i,
+    input wire          ext_rstn_i,
     // Debug interface
     input wire [7:0]    dbg_cmd_i,
     input wire [31:0]   dbg_addr_i,
@@ -30,6 +30,8 @@ logic [7:0] gpio_dir;
 logic [7:0] gpio_val;
 
 core_wrapper core_i(
+    .sys_clk_i  ( ext_clk_i),
+    .rstn_i     ( ext_rstn_i),
     .gpio_dir_o ( gpio_dir ),
     .gpio_val_o ( gpio_val ),
     .gpio_val_i ( {gpio_val[0], gpio_val[1], gpio_val[2], gpio_val[3], gpio_val[4], gpio_val[5], gpio_val[6], gpio_val[7]} ),

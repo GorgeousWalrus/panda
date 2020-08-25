@@ -19,8 +19,6 @@
 ../../rtl/memory/wb_ram_wrapper.sv
 
 ../../ips/wishbone/src/wb_xbar.sv
-../../ips/wishbone/src/wb_master.sv
-../../ips/wishbone/src/wb_slave.sv
 -I../../ips/wishbone/includes
 
 ../../ips/lsu/src/load_unit.sv

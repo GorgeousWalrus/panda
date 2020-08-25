@@ -21,7 +21,7 @@ module ram #(
 )(
     input logic                     clk,
     input logic                     rstn_i,
-    input logic [$clog2(DEPTH):0]   addr_i,
+    input logic [$clog2(DEPTH)-1:0] addr_i,
     input logic                     en_i,
     input logic                     we_i,
     input logic [WORD_WIDTH-1:0]    din_i,
@@ -30,19 +30,14 @@ module ram #(
 
 (*ram_style = "block" *) reg [WORD_WIDTH-1:0] data[0:DEPTH-1];
 
-/* verilator lint_off WIDTH */
-always_comb
-begin
-    dout_o = 'b0;
-    if(en_i)
-        dout_o = data[addr_i];
-end
-
 always_ff @(posedge clk)
 begin
-    if(en_i && we_i)
-        data[addr_i] <= din_i;
+    if(en_i) begin
+        if(we_i)
+            data[addr_i] <= din_i;
+        else
+            dout_o <= data[addr_i];
+    end
 end
-/* verilator lint_on WIDTH */
 
 endmodule

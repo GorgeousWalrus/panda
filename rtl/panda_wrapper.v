@@ -1,6 +1,6 @@
 module panda_wrapper (
-  input wire              clk,
-  input wire              rstn_i,
+  input wire              ext_clk_i,
+  input wire              ext_rst_i,
   // DEBUG
   input wire [7:0]        dbg_cmd_i,
   input wire [31:0]       dbg_addr_i,
@@ -24,9 +24,16 @@ for(genvar ii = 0; ii < 8; ii = ii + 1) begin : GPIO_IO_BUF
   );
 end
 
+xilinx_clocking_wizard clk_gen_i(
+  .clk_in1    ( ext_clk_i   ),
+  .reset      ( ext_rst_i   ),
+  .locked     ( po_rstn     ),
+  .clk_out1   ( sys_clk     )
+);
+
 core_wrapper core_i(
-  .clk         ( clk         ),
-  .rstn_i      ( rstn_i      ),
+  .sys_clk_i   ( sys_clk     ),
+  .po_rstn_i   ( po_rstn     ),
   .gpio_dir_o  ( gpio_dir    ),
   .gpio_val_i  ( gpio_val_i  ),
   .gpio_val_o  ( gpio_val_o  ),
