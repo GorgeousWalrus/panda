@@ -1,4 +1,4 @@
-#define N_CYC 10
+#define N_CYC 40
 
 int performance(){
     volatile int *timer = (int *) 0x20000000;
