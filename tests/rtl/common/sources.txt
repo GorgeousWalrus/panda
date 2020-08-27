@@ -21,6 +21,11 @@
 ../../ips/wishbone/src/wb_xbar.sv
 -I../../ips/wishbone/includes
 
+../../ips/apb/src/apb_bar.sv
+-I../../ips/apb/inc
+
+../../ips/wb2apb/src/wb2apb.sv
+
 ../../ips/lsu/src/load_unit.sv
 ../../ips/lsu/src/store_unit.sv
 ../../ips/lsu/src/lsu.sv

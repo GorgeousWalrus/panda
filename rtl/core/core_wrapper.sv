@@ -21,6 +21,7 @@
 
 `include "dbg_intf.sv"
 `include "wb_intf.sv"
+`include "apb_intf.sv"
 
 module core_wrapper
 (
@@ -53,7 +54,11 @@ logic dbg_periph_rst_req;
 
 // Wishbone busses
 wb_bus_t#(.TAGSIZE(1)) masters[3:0]();
-wb_bus_t#(.TAGSIZE(1)) slaves[3:0]();
+wb_bus_t#(.TAGSIZE(1)) slaves[2:0]();
+
+// APB bus
+apb_bus_t apb_master();
+apb_bus_t apb_slaves[1:0]();
 
 // Debug bus
 dbg_intf dbg_bus();
@@ -117,7 +122,7 @@ wb_ram_wrapper #(
 
 wb_xbar #(
     .TAGSIZE        ( 1 ),
-    .N_SLAVE        ( 4 ),
+    .N_SLAVE        ( 3 ),
     .N_MASTER       ( 4 )
 ) wb_xbar_i (
     .clk_i          ( sys_clk_i ),
@@ -126,23 +131,33 @@ wb_xbar #(
     .wb_master_port (slaves     )
 );
 
+wb2apb wb2apb_i (
+  .clk        ( sys_clk_i ),
+  .rstn_i     ( rstn_i    ),
+  .wb_bus     ( slaves[2] ),
+  .apb_bus    ( apb_master)
+);
+
+apb_bar #(
+  .N_SLAVES ( 2 )
+) apb_bar_i(
+  .slave_port ( apb_master ),
+  .master_port( apb_slaves )
+);
+
 timer timer_i(
-  .clk      ( sys_clk_i      ),
-  .rstn_i   ( periph_rst_req ),
   .irq_o    ( timer_irqs     ),
-  .wb_bus   ( slaves[2]      )
+  .apb_bus  ( apb_slaves[0]  )
 );
 
 gpio_module #(
   .N_GPIOS ( 8 )
 ) gpio_i (
-  .clk      ( sys_clk_i   ),
-  .rstn_i   ( rstn_i      ),
   .dir_o    ( gpio_dir_o  ),
   .val_o    ( gpio_val_o  ),
   .val_i    ( gpio_val_i  ),
   .irq_o    ( gpio_irqs   ),
-  .wb_bus   ( slaves[3]   )
+  .apb_bus  ( apb_slaves[1]   )
 );
 
 endmodule
