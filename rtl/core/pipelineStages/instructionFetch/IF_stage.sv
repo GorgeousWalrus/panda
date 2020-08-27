@@ -16,7 +16,10 @@
 //
 // ------------------------------------------------------------
 
-module IF_stage (
+module IF_stage #(
+    parameter            ICACHE_NLINES,
+    parameter            ICACHE_WoPerLi
+) (
     input logic          clk,
     input logic          rstn_i,
     input logic          flush_i,
@@ -67,8 +70,8 @@ assign dbg_pc_o = pc_q;
 
 `ifdef INSTR_CACHE
     cache#(
-        .N_WORDS_PER_LINE ( 8  ),
-        .N_LINES          ( 16 )
+        .N_WORDS_PER_LINE ( ICACHE_WoPerLi  ),
+        .N_LINES          ( ICACHE_NLINES )
     ) icache_i (
         .clk        ( clk       ),
         .rstn_i     ( rstn_i    ),

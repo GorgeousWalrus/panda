@@ -1,9 +1,9 @@
 #define N_CYC 10
 
 int performance(){
-    volatile int *timer = (int *) 0x8000;
-    volatile int *t_cfg = (int *) 0x8004;
-    volatile int *cmp   = (int *) 0x8008;
+    volatile int *timer = (int *) 0x20000000;
+    volatile int *t_cfg = (int *) 0x20000004;
+    volatile int *cmp   = (int *) 0x20000008;
 
     volatile int t_old[8] = {0};
     int t_new = 0;

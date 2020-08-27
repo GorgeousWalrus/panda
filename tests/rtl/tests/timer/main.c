@@ -1,7 +1,7 @@
 #include "timer.h"
 
 int main() {
-    unsigned int *magic_addr = (unsigned int*) 0x7ff0;
+    unsigned int *magic_addr = (unsigned int*) 0x10007ff0;
     
     int result = timer();
 

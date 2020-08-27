@@ -22,7 +22,11 @@
 
 module MEM_stage
 #(
-    parameter BITSIZE = 32
+    parameter                               DCACHE_NLINES,
+    parameter                               DCACHE_WoPerLi,
+    parameter                               N_C_REGIONS,
+    parameter logic [N_C_REGIONS-1:0][31:0] C_REGION_START,
+    parameter logic [N_C_REGIONS-1:0][31:0] C_REGION_END
 )(
     input logic         clk,
     input logic         rstn_i,
@@ -77,15 +81,9 @@ assign ls_valid = lsu_valid | cache_valid;
 `define DCACHE
 
 c_region_sel#(
-`ifdef DCACHE
-    .N_C_REGIONS    ( 1         ),
-    .C_REGION_START ( 32'h0     ),
-    .C_REGION_END   ( 32'h7000  )
-`else
-    .N_C_REGIONS    ( 1         ),
-    .C_REGION_START ( 32'hffffffff ),
-    .C_REGION_END   ( 32'hffffffff )
-`endif
+    .N_C_REGIONS    ( N_C_REGIONS    ),
+    .C_REGION_START ( C_REGION_START ),
+    .C_REGION_END   ( C_REGION_END   )
 ) c_region_sel_i (
     .load_i         ( load          ),
     .store_i        ( store         ),
@@ -98,8 +96,8 @@ c_region_sel#(
 );
 
     cache#(
-        .N_WORDS_PER_LINE ( 8  ),
-        .N_LINES          ( 16 )
+        .N_WORDS_PER_LINE ( DCACHE_WoPerLi  ),
+        .N_LINES          ( DCACHE_NLINES   )
     ) dcache_i (
         .clk        ( clk           ),
         .rstn_i     ( rstn_i        ),

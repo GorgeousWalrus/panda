@@ -1,10 +1,10 @@
 int gpio(){
 
-    volatile unsigned int *gpio_dir = (unsigned int*) 0x8100;
-    volatile unsigned int *gpio_val = (unsigned int*) 0x8104;
-    volatile unsigned int *gpio_inv = (unsigned int*) 0x8108;
-    volatile unsigned int *gpio_inten = (unsigned int*) 0x810c;
-    volatile unsigned int *gpio_int_t = (unsigned int*) 0x8110;
+    volatile unsigned int *gpio_dir = (unsigned int*) 0x30000000;
+    volatile unsigned int *gpio_val = (unsigned int*) 0x30000004;
+    volatile unsigned int *gpio_inv = (unsigned int*) 0x30000008;
+    volatile unsigned int *gpio_inten = (unsigned int*) 0x3000000c;
+    volatile unsigned int *gpio_int_t = (unsigned int*) 0x30000010;
 
 
     *gpio_dir = 0x0;

@@ -63,8 +63,18 @@ dbg_intf dbg_bus();
 assign core_rst_req   = ((~dbg_core_rst_req) & rstn_i);
 assign periph_rst_req = (~dbg_periph_rst_req) & rstn_i;
 
-core_top core_i
-(
+core_top #(
+    // instruction cache
+    .ICACHE_NLINES  ( 8 ),
+    .ICACHE_WoPerLi ( 8  ),
+    // data cache
+    .DCACHE_NLINES  ( 16 ),
+    .DCACHE_WoPerLi ( 8  ),
+    // Cacheable regions
+    .N_C_REGIONS    ( 2  ),
+    .C_REGION_START ( {32'h00000000, 32'h10000000} ),
+    .C_REGION_END   ( {32'h00004000, 32'h10007000} )
+) core_i (
     .clk            ( sys_clk_i     ),
     .rstn_i         ( core_rst_req  ),
     .rst_reqn_o     ( core_rst_reqn ),
@@ -88,16 +98,6 @@ dbg_module dbg_module_i (
   .wb_bus           ( masters[0]        )
 );
 
-
-`define ROM_START_ADDR 32'h0
-`define ROM_END_ADDR 32'h4000
-`define RAM_START_ADDR 32'h4000
-`define RAM_END_ADDR 32'h8000
-`define TIMER_START_ADDR 32'h8000
-`define TIMER_END_ADDR 32'h8100
-`define GPIO_START_ADDR 32'h8100
-`define GPIO_END_ADDR 32'h8200
-
 // Not really a rom, just the name so far...
 wb_ram_wrapper #(
   .DEPTH (16384)
@@ -108,7 +108,7 @@ wb_ram_wrapper #(
 );
 
 wb_ram_wrapper #(
-  .DEPTH (16384)
+  .DEPTH (32768)
 ) ram_i (
   .clk    ( sys_clk_i ),
   .rstn_i ( rstn_i    ),
@@ -122,8 +122,6 @@ wb_xbar #(
 ) wb_xbar_i (
     .clk_i          ( sys_clk_i ),
     .rst_i          ( ~rstn_i   ),
-    .SSTART_ADDR    ({`GPIO_START_ADDR, `TIMER_START_ADDR, `RAM_START_ADDR, `ROM_START_ADDR}),
-    .SEND_ADDR      ({`GPIO_END_ADDR,   `TIMER_END_ADDR,   `RAM_END_ADDR,   `ROM_END_ADDR}),
     .wb_slave_port  (masters    ),
     .wb_master_port (slaves     )
 );
