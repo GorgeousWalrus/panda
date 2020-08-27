@@ -22,3 +22,6 @@
 [submodule "ips/wb2apb"]
 	path = ips/wb2apb
 	url = git@github.com:GorgeousWalrus/panda_wb2apb.git
+[submodule "ips/uart_module"]
+	path = ips/uart_module
+	url = git@github.com:GorgeousWalrus/panda_uart.git

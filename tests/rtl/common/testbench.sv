@@ -29,12 +29,16 @@ module testbench(
 logic [7:0] gpio_dir;
 logic [7:0] gpio_val;
 
+logic uart_x;
+
 core_wrapper core_i(
     .sys_clk_i  ( ext_clk_i),
     .rstn_i     ( ext_rstn_i),
     .gpio_dir_o ( gpio_dir ),
     .gpio_val_o ( gpio_val ),
     .gpio_val_i ( {gpio_val[0], gpio_val[1], gpio_val[2], gpio_val[3], gpio_val[4], gpio_val[5], gpio_val[6], gpio_val[7]} ),
+    .uart_tx_o  ( uart_x   ),
+    .uart_rx_i  ( uart_x   ),
     .*
 );
 

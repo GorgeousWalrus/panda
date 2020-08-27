@@ -31,6 +31,9 @@ module core_wrapper
     output wire [7:0]   gpio_dir_o,
     output wire [7:0]   gpio_val_o,
     input wire [7:0]    gpio_val_i,
+    // UART
+    input wire          uart_rx_i,
+    output wire         uart_tx_o,
     // Debug interface
     input wire [7:0]    dbg_cmd_i,
     input wire [31:0]   dbg_addr_i,
@@ -58,7 +61,7 @@ wb_bus_t#(.TAGSIZE(1)) slaves[2:0]();
 
 // APB bus
 apb_bus_t apb_master();
-apb_bus_t apb_slaves[1:0]();
+apb_bus_t apb_slaves[2:0]();
 
 // Debug bus
 dbg_intf dbg_bus();
@@ -139,7 +142,7 @@ wb2apb wb2apb_i (
 );
 
 apb_bar #(
-  .N_SLAVES ( 2 )
+  .N_SLAVES ( 3 )
 ) apb_bar_i(
   .slave_port ( apb_master ),
   .master_port( apb_slaves )
@@ -158,6 +161,12 @@ gpio_module #(
   .val_i    ( gpio_val_i  ),
   .irq_o    ( gpio_irqs   ),
   .apb_bus  ( apb_slaves[1]   )
+);
+
+uart_module uart_i(
+  .apb_bus  ( apb_slaves[2] ),
+  .rx_i     ( uart_rx_i     ),
+  .tx_o     ( uart_tx_o     )
 );
 
 endmodule
