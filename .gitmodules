@@ -16,3 +16,9 @@
 [submodule "ips/debug_module"]
 	path = ips/debug_module
 	url = ../panda_debug
+[submodule "ips/apb"]
+	path = ips/apb
+	url = git@github.com:GorgeousWalrus/panda_apb.git
+[submodule "ips/wb2apb"]
+	path = ips/wb2apb
+	url = git@github.com:GorgeousWalrus/panda_wb2apb.git
