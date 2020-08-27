@@ -20,7 +20,15 @@
 // ------------------------------------------------------------
 
 
-module core_top (
+module core_top #(
+    parameter                               N_C_REGIONS,
+    parameter logic [N_C_REGIONS-1:0][31:0] C_REGION_START,
+    parameter logic [N_C_REGIONS-1:0][31:0] C_REGION_END,
+    parameter                               ICACHE_NLINES,
+    parameter                               ICACHE_WoPerLi,
+    parameter                               DCACHE_NLINES,
+    parameter                               DCACHE_WoPerLi
+)(
     input logic          clk,
     input logic          rstn_i,
     output logic         rst_reqn_o,
@@ -152,7 +160,10 @@ registerFile registerFile_i (
     .data_rs2_o ( REG_rs2_d   )
 );
 
-IF_stage IF_i (
+IF_stage #(
+    .ICACHE_NLINES  ( ICACHE_NLINES  ),
+    .ICACHE_WoPerLi ( ICACHE_WoPerLi )
+) IF_i (
     .clk         ( clk           ),
     .rstn_i      ( rstn_i        ),
     .flush_i     ( flush         ),
@@ -215,7 +226,13 @@ EX_stage EX_i (
     .branch_o ( branch        )
 );
 
-MEM_stage MEM_i (
+MEM_stage #(
+    .DCACHE_NLINES  ( DCACHE_NLINES  ),
+    .DCACHE_WoPerLi ( DCACHE_WoPerLi ),
+    .N_C_REGIONS    ( N_C_REGIONS    ),
+    .C_REGION_START ( C_REGION_START ),
+    .C_REGION_END   ( C_REGION_END   )
+) MEM_i (
     .clk         ( clk           ),
     .rstn_i      ( rstn_i        ),
     .halt_i      ( halt_core     ),
