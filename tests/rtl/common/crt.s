@@ -31,6 +31,6 @@ _start:
     li x29,0
     li x30,0
     li x31,0
-    li sp,0x6000
+    li sp,0x10006000
     j main
     

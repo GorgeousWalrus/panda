@@ -88,16 +88,6 @@ dbg_module dbg_module_i (
   .wb_bus           ( masters[0]        )
 );
 
-
-`define ROM_START_ADDR 32'h0
-`define ROM_END_ADDR 32'h4000
-`define RAM_START_ADDR 32'h4000
-`define RAM_END_ADDR 32'h8000
-`define TIMER_START_ADDR 32'h8000
-`define TIMER_END_ADDR 32'h8100
-`define GPIO_START_ADDR 32'h8100
-`define GPIO_END_ADDR 32'h8200
-
 // Not really a rom, just the name so far...
 wb_ram_wrapper #(
   .DEPTH (16384)
@@ -122,8 +112,6 @@ wb_xbar #(
 ) wb_xbar_i (
     .clk_i          ( sys_clk_i ),
     .rst_i          ( ~rstn_i   ),
-    .SSTART_ADDR    ({`GPIO_START_ADDR, `TIMER_START_ADDR, `RAM_START_ADDR, `ROM_START_ADDR}),
-    .SEND_ADDR      ({`GPIO_END_ADDR,   `TIMER_END_ADDR,   `RAM_END_ADDR,   `ROM_END_ADDR}),
     .wb_slave_port  (masters    ),
     .wb_master_port (slaves     )
 );
