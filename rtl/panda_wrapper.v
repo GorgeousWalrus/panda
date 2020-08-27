@@ -33,7 +33,7 @@ xilinx_clocking_wizard clk_gen_i(
 
 core_wrapper core_i(
   .sys_clk_i   ( sys_clk     ),
-  .po_rstn_i   ( po_rstn     ),
+  .rstn_i      ( po_rstn     ),
   .gpio_dir_o  ( gpio_dir    ),
   .gpio_val_i  ( gpio_val_i  ),
   .gpio_val_o  ( gpio_val_o  ),
