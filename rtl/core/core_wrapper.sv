@@ -35,11 +35,8 @@ module core_wrapper
     input wire          uart_rx_i,
     output wire         uart_tx_o,
     // Debug interface
-    input wire [7:0]    dbg_cmd_i,
-    input wire [31:0]   dbg_addr_i,
-    input wire [31:0]   dbg_data_i,
-    output wire [31:0]  dbg_data_o,
-    output wire         dbg_ready_o
+    input wire          dbg_uart_rx_i,
+    output wire         dbg_uart_tx_o
 );
 
 // Reset signals
@@ -67,7 +64,6 @@ apb_bus_t apb_slaves[2:0]();
 dbg_intf dbg_bus();
 
 // Reset requests
-// TODO This is faulty!
 assign core_rst_req   = ((~dbg_core_rst_req) & rstn_i);
 assign periph_rst_req = (~dbg_periph_rst_req) & rstn_i;
 
@@ -92,14 +88,25 @@ core_top #(
     .dbg_bus        ( dbg_bus       )
 );
 
-dbg_module dbg_module_i (
+// dbg_module dbg_module_i (
+//   .clk              ( sys_clk_i         ),
+//   .rstn_i           ( rstn_i            ),
+//   .cmd_i            ( dbg_cmd_i         ),
+//   .addr_i           ( dbg_addr_i        ),
+//   .data_i           ( dbg_data_i        ),
+//   .data_o           ( dbg_data_o        ),
+//   .ready_o          ( dbg_ready_o       ),
+//   .core_rst_req_o   ( dbg_core_rst_req  ),
+//   .periph_rst_req_o ( dbg_periph_rst_req),
+//   .dbg_bus          ( dbg_bus           ),
+//   .wb_bus           ( masters[0]        )
+// );
+
+dbg_uart_tap dbg_module_i (
   .clk              ( sys_clk_i         ),
   .rstn_i           ( rstn_i            ),
-  .cmd_i            ( dbg_cmd_i         ),
-  .addr_i           ( dbg_addr_i        ),
-  .data_i           ( dbg_data_i        ),
-  .data_o           ( dbg_data_o        ),
-  .ready_o          ( dbg_ready_o       ),
+  .rx_i             ( dbg_uart_rx_i     ),
+  .tx_o             ( dbg_uart_tx_o     ),
   .core_rst_req_o   ( dbg_core_rst_req  ),
   .periph_rst_req_o ( dbg_periph_rst_req),
   .dbg_bus          ( dbg_bus           ),
@@ -135,10 +142,10 @@ wb_xbar #(
 );
 
 wb2apb wb2apb_i (
-  .clk        ( sys_clk_i ),
-  .rstn_i     ( rstn_i    ),
-  .wb_bus     ( slaves[2] ),
-  .apb_bus    ( apb_master)
+  .clk        ( sys_clk_i       ),
+  .rstn_i     ( periph_rst_req  ),
+  .wb_bus     ( slaves[2]       ),
+  .apb_bus    ( apb_master      )
 );
 
 apb_bar #(

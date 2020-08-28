@@ -19,11 +19,13 @@ module testbench(
     input wire          ext_clk_i,
     input wire          ext_rstn_i,
     // Debug interface
-    input wire [7:0]    dbg_cmd_i,
-    input wire [31:0]   dbg_addr_i,
-    input wire [31:0]   dbg_data_i,
-    output wire [31:0]  dbg_data_o,
-    output wire         dbg_ready_o
+    input wire          dbg_uart_rx_i,
+    output wire         dbg_uart_tx_o
+    // input wire [7:0]    dbg_cmd_i,
+    // input wire [31:0]   dbg_addr_i,
+    // input wire [31:0]   dbg_data_i,
+    // output wire [31:0]  dbg_data_o,
+    // output wire         dbg_ready_o
 );
 
 logic [7:0] gpio_dir;

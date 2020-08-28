@@ -10,6 +10,10 @@ double sc_time_stamp () {       // Called by $time in Verilog
 								// what SystemC does
 }
 
+#define CLK_FREQ 50000000
+#define BAUDRATE 50000000
+#define CLK_DIV CLK_FREQ/BAUDRATE
+
 template<class MODULE>	class TESTBENCH {
 	public:
 		unsigned long	m_tickcount;
@@ -19,6 +23,7 @@ template<class MODULE>	class TESTBENCH {
 		TESTBENCH(void) {
 			m_core = new MODULE;
 			Verilated::traceEverOn(true);
+			this->m_core->dbg_uart_rx_i = 1;
 			m_tickcount = 0l;
 		}
 
@@ -94,112 +99,144 @@ template<class MODULE>	class TESTBENCH {
 		// Debug interfacing functions
 		// -----------------------------------------------------------
 
+		void baud_tick(){
+			for(int i = 0; i < CLK_DIV; i++) this->tick();
+		}
+
+		void uart_send(int data){
+			this->tick();
+			int parity = 0;
+			for(int i = 0; i < 4; i++){
+				this->m_core->dbg_uart_rx_i = 0;
+				this->baud_tick();
+				for(int j = 0; j < 8; j++){
+					this->m_core->dbg_uart_rx_i = ((data >> (8*i)) >> j) & 1;
+					parity = parity ^ (((data >> (8*i)) >> j) & 1);
+					this->baud_tick();
+				}
+				this->m_core->dbg_uart_rx_i = parity;
+				this->baud_tick();
+				this->m_core->dbg_uart_rx_i = 1;
+				this->baud_tick();
+			}
+		}
+
+		int uart_receive(){
+			this->tick();
+			int data = 0;
+			for(int i = 0; i < 4; i ++){
+				while(this->m_core->dbg_uart_tx_o == 1) this->tick();
+				this->baud_tick();
+				for(int j = 0; j < 8; j++){
+					data = data | ((this->m_core->dbg_uart_tx_o << j) << (8*i));
+					this->baud_tick();
+				}
+				// ignore parity
+				this->baud_tick();
+			}
+			return data;
+		}
+
+		int dbg_uart_send(int data){
+			uart_send(data);
+			int ret = uart_receive();
+			if(ret != 0x1) return 1;
+			return 0;
+		}
+
+		int dbg_uart_read(){
+			int ret = uart_receive();
+			uart_send(0x1);
+			return ret;
+		}
+
 		// Read from memory address (can also be a memory mapped
 		// slave of the wishbone bus)
 		int read_mem(int addr){
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_addr_i = addr;
-			this->m_core->dbg_cmd_i = 0x01;
-			this->tick();
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x0;
-			return (int) this->m_core->dbg_data_o;
+			int data;
+			dbg_uart_send(0x80);
+			dbg_uart_send(addr);
+			data = dbg_uart_read();
+			if(dbg_uart_read() != 0x2)
+				return -1;
+			return data;
 		}
 
 		// Write to memory address (can also be a memory mapped
 		// slave of the wishbone bus)
-		void write_mem(int addr, int data){
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_addr_i = addr;
-			this->m_core->dbg_data_i = data;
-			this->m_core->dbg_cmd_i = 0x02;
-			this->tick();
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x0;
-			this->tick();
+		int write_mem(int addr, int data){
+			dbg_uart_send(0xc0);
+			dbg_uart_send(addr);
+			dbg_uart_send(data);
+			if(dbg_uart_read() != 0x2)
+				return -1;
+			return 0;
 		}
 
 		// Read from core registers
 		int read_reg(int reg){
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_addr_i = reg;
-			this->m_core->dbg_cmd_i = 0x13;
-			this->tick();
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x0;
-			return (int) this->m_core->dbg_data_o;
+			int data;
+			dbg_uart_send(0x81);
+			dbg_uart_send(reg);
+			data = dbg_uart_read();
+			if(dbg_uart_read() != 0x2)
+				return -1;
+			return data;
 		}
 
 		// Write to core registers	
-		void write_reg(int reg, int data){
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_addr_i = reg;
-			this->m_core->dbg_cmd_i = 0x14;
-			this->m_core->dbg_data_i = data;
-			this->tick();
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x0;
-			this->tick();
+		int write_reg(int reg, int data){
+			dbg_uart_send(0xc1);
+			dbg_uart_send(reg);
+			dbg_uart_send(data);
+			if(dbg_uart_read() != 0x2)
+				return -1;
+			return 0;
 		}
 
 		// Halt the core
-		void halt_core(){
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x11;
-			this->tick();
-			this->m_core->dbg_cmd_i = 0x0;
+		int halt_core(){
+			dbg_uart_send(0x04);
+			if(dbg_uart_read() != 0x2)
+				return -1;
+			return 0;
 		}
 
 		// Resume the core
-		void resume_core(){
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x12;
-			this->tick();
-			this->m_core->dbg_cmd_i = 0x0;
+		int resume_core(){
+			dbg_uart_send(0x05);
+			if(dbg_uart_read() != 0x2)
+				return -1;
+			return 0;
 		}
 
 		// Reset the core
-		void reset_core(){
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x03;
-			this->tick();
-			this->m_core->dbg_cmd_i = 0x0;
+		int reset_core(){
+			dbg_uart_send(0x01);
+			if(dbg_uart_read() != 0x2)
+				return -1;
+			return 0;
 		}
 
 		// Read the program counter
 		int read_pc(){
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x15;
-			this->tick();
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x0;
-			return (int) this->m_core->dbg_data_o;
+			int data;
+			dbg_uart_send(0x82);
+			dbg_uart_send(0x0);
+			data = dbg_uart_read();
+			if(dbg_uart_read() != 0x2)
+				return -1;
+			return data;
 		}
 
 		// Set the program counter
-		void set_pc(int pc){
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x16;
-			this->m_core->dbg_data_i = pc;
-			this->tick();
-			while(this->m_core->dbg_ready_o == 0)
-				this->tick();
-			this->m_core->dbg_cmd_i = 0x0;
-			this->tick();
+		int set_pc(int pc){
+			dbg_uart_send(0xc2);
+			dbg_uart_send(0x0);
+			dbg_uart_send(pc);
+			if(dbg_uart_read() != 0x2)
+				return -1;
+			return 0;
 		}
 
 
@@ -240,8 +277,7 @@ template<class MODULE>	class TESTBENCH {
 			this->load_program(program, instr_cnt, startAddr);
 
 			// Set core to start of program
-			this->set_pc(0x0);
-
+			this->set_pc(startAddr);
 			// Start the program
 			this->resume_core();
 		}

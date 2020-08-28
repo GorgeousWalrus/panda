@@ -2,11 +2,8 @@ module panda_wrapper (
   input wire              ext_clk_i,
   input wire              ext_rst_i,
   // DEBUG
-  input wire [7:0]        dbg_cmd_i,
-  input wire [31:0]       dbg_addr_i,
-  input wire [31:0]       dbg_data_i,
-  output wire [31:0]      dbg_data_o,
-  output wire             dbg_ready_o,
+  input wire              dbg_uart_rx_i,
+  output wire             dbg_uart_tx_o,
   // GPIO
   inout wire [7:0]        gpio_io
 );
@@ -32,16 +29,13 @@ xilinx_clocking_wizard clk_gen_i(
 );
 
 core_wrapper core_i(
-  .sys_clk_i   ( sys_clk     ),
-  .rstn_i      ( po_rstn     ),
-  .gpio_dir_o  ( gpio_dir    ),
-  .gpio_val_i  ( gpio_val_i  ),
-  .gpio_val_o  ( gpio_val_o  ),
-  .dbg_cmd_i   ( dbg_cmd_i   ),
-  .dbg_addr_i  ( dbg_addr_i  ),
-  .dbg_data_i  ( dbg_data_i  ),
-  .dbg_data_o  ( dbg_data_o  ),
-  .dbg_ready_o ( dbg_ready_o )
+  .sys_clk_i      ( sys_clk       ),
+  .rstn_i         ( po_rstn       ),
+  .gpio_dir_o     ( gpio_dir      ),
+  .gpio_val_i     ( gpio_val_i    ),
+  .gpio_val_o     ( gpio_val_o    ),
+  .dbg_uart_rx_i  ( dbg_uart_rx_i ),
+  .dbg_uart_tx_o  ( dbg_uart_tx_o )
 );
 
 endmodule
