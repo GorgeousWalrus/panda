@@ -5,7 +5,10 @@ module panda_wrapper (
   input wire              dbg_uart_rx_i,
   output wire             dbg_uart_tx_o,
   // GPIO
-  inout wire [7:0]        gpio_io
+  inout wire [7:0]        gpio_io,
+  // UART
+  input wire              uart_rx_i,
+  output wire             uart_tx_o
 );
 
 wire [7:0] gpio_val_i;
@@ -35,7 +38,9 @@ core_wrapper core_i(
   .gpio_val_i     ( gpio_val_i    ),
   .gpio_val_o     ( gpio_val_o    ),
   .dbg_uart_rx_i  ( dbg_uart_rx_i ),
-  .dbg_uart_tx_o  ( dbg_uart_tx_o )
+  .dbg_uart_tx_o  ( dbg_uart_tx_o ),
+  .uart_rx_i      ( uart_rx_i     ),
+  .uart_tx_o      ( uart_tx_o     )
 );
 
 endmodule

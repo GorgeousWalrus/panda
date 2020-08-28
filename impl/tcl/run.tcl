@@ -11,18 +11,10 @@ source tcl/src_add.tcl
 
 add_files -norecurse $IPS/xilinx_clocking_wizard/ip/xilinx_clocking_wizard.xci
 
-set_property top ${NAME}_wrapper [current_fileset]
-
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 
-source tcl/${NAME}_bd.tcl
-
-# make_wrapper -files [get_files ./${NAME}.srcs/sources_1/bd/${NAME}_bd/${NAME}_bd.bd] -to
-# add_files -norecurse ./${NAME}.srcs/sources_1/bd/${NAME}_bd/hdl/${NAME}_bd_wrapper.v
-# set_property top ${NAME}_bd_wrapper [current_fileset]
-# update_compile_order -fileset sources_1
-# set_property top ${NAME}_wrapper_0
+set_property top ${NAME}_wrapper [current_fileset]
 
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1

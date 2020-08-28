@@ -4,4 +4,5 @@ set_property include_dirs {
     ../ips/gpio_module/inc/ \
     ../ips/timer_module/includes/ \
     ../ips/wishbone/includes/ \    
+    ../ips/apb/inc/ \
 } [current_fileset]

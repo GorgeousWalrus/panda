@@ -19,6 +19,11 @@ set MEMORY " \
     $RTL/memory/wb_ram_wrapper.sv \
 "
 
+set APB " \
+    $IPS/apb/src/apb_bar.sv \
+    $IPS/wb2apb/src/wb2apb.sv \
+"
+
 set LSU " \
     $IPS/lsu/src/load_unit.sv \
     $IPS/lsu/src/store_unit.sv \
@@ -34,13 +39,22 @@ set WISHBONE " \
     $IPS/wishbone/src/wb_xbar.sv \
 "
 
+set UART_MODULE " \
+    $IPS/uart_module/src/uart_module.sv \
+    $IPS/uart_module/src/uart_tx.sv \
+    $IPS/uart_module/src/uart_rx.sv \
+"
+
 set DBG_MODULE " \
     $IPS/debug_module/src/core_dbg_module.sv \
+    $IPS/debug_module/src/dbg_uart_tap.sv \
     $IPS/debug_module/src/dbg_module.sv \
 "
+
 set TIMER_MODULE " \
     $IPS/timer_module/src/timer.sv \
 "
+
 set GPIO_MODULE " \
     $IPS/gpio_module/src/gpio_module.sv \
 "
