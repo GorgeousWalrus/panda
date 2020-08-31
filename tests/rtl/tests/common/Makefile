@@ -9,7 +9,7 @@ VERILATOR_COVERAGE = $(VERILATOR_ROOT)/bin/verilator_coverage
 default: main
 
 .PHONY: build
-build:
+build: clean
 	@if [ ! -d "./build" ]; then mkdir build; fi
 	@if [ ! -d "./logs" ]; then mkdir logs; fi
 

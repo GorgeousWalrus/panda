@@ -45,6 +45,8 @@
 ../../ips/uart_module/src/uart_rx.sv
 ../../ips/uart_module/src/uart_module.sv
 
+../../ips/common/fifo/src/fifo.sv
+
 common/testbench.sv
 
 -I../../rtl/includes

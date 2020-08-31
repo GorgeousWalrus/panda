@@ -47,6 +47,7 @@ logic periph_rst_req;
 // interrupts
 logic [1:0]   timer_irqs;
 logic [7:0]   gpio_irqs;
+logic         uart_irq;
 
 // debug signals
 logic dbg_core_rst_req;
@@ -87,20 +88,6 @@ core_top #(
     .MEM_wb_bus_lsu ( masters[1]    ),
     .dbg_bus        ( dbg_bus       )
 );
-
-// dbg_module dbg_module_i (
-//   .clk              ( sys_clk_i         ),
-//   .rstn_i           ( rstn_i            ),
-//   .cmd_i            ( dbg_cmd_i         ),
-//   .addr_i           ( dbg_addr_i        ),
-//   .data_i           ( dbg_data_i        ),
-//   .data_o           ( dbg_data_o        ),
-//   .ready_o          ( dbg_ready_o       ),
-//   .core_rst_req_o   ( dbg_core_rst_req  ),
-//   .periph_rst_req_o ( dbg_periph_rst_req),
-//   .dbg_bus          ( dbg_bus           ),
-//   .wb_bus           ( masters[0]        )
-// );
 
 dbg_uart_tap dbg_module_i (
   .clk              ( sys_clk_i         ),
@@ -163,15 +150,16 @@ timer timer_i(
 gpio_module #(
   .N_GPIOS ( 8 )
 ) gpio_i (
-  .dir_o    ( gpio_dir_o  ),
-  .val_o    ( gpio_val_o  ),
-  .val_i    ( gpio_val_i  ),
-  .irq_o    ( gpio_irqs   ),
-  .apb_bus  ( apb_slaves[1]   )
+  .dir_o    ( gpio_dir_o    ),
+  .val_o    ( gpio_val_o    ),
+  .val_i    ( gpio_val_i    ),
+  .irq_o    ( gpio_irqs     ),
+  .apb_bus  ( apb_slaves[1] )
 );
 
 uart_module uart_i(
   .apb_bus  ( apb_slaves[2] ),
+  .irq_o    ( uart_irq      ),
   .rx_i     ( uart_rx_i     ),
   .tx_o     ( uart_tx_o     )
 );
