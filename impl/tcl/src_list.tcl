@@ -39,6 +39,10 @@ set WISHBONE " \
     $IPS/wishbone/src/wb_xbar.sv \
 "
 
+set COMMON " \
+    $IPS/common/fifo/src/fifo.sv \
+"
+
 set UART_MODULE " \
     $IPS/uart_module/src/uart_module.sv \
     $IPS/uart_module/src/uart_tx.sv \

@@ -18,13 +18,13 @@
 	url = ../panda_debug
 [submodule "ips/apb"]
 	path = ips/apb
-	url = git@github.com:GorgeousWalrus/panda_apb.git
+	url = ../panda_apb.git
 [submodule "ips/wb2apb"]
 	path = ips/wb2apb
-	url = git@github.com:GorgeousWalrus/panda_wb2apb.git
+	url = ../panda_wb2apb.git
 [submodule "ips/uart_module"]
 	path = ips/uart_module
-	url = git@github.com:GorgeousWalrus/panda_uart.git
+	url = ../panda_uart.git
 [submodule "ips/common"]
 	path = ips/common
-	url = git@github.com:GorgeousWalrus/panda_common.git
+	url = ../panda_common.git

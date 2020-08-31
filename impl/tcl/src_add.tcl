@@ -5,6 +5,7 @@ add_files -norecurse -scan_for_includes $APB
 add_files -norecurse -scan_for_includes $LSU
 add_files -norecurse -scan_for_includes $CACHE
 add_files -norecurse -scan_for_includes $WISHBONE
+add_files -norecurse -scan_for_includes $COMMON
 add_files -norecurse -scan_for_includes $DBG_MODULE
 add_files -norecurse -scan_for_includes $UART_MODULE
 add_files -norecurse -scan_for_includes $TIMER_MODULE
