@@ -1,7 +1,7 @@
 # PandaZero
 A RISC-V processor, destined to become a microcontroller!
 
-Quick overview:
+## Quick overview:
 * RV32I ISA
 * 5 Stage Pipeline
 * L1 instruction cache
@@ -16,7 +16,7 @@ Quick overview:
   * 8x GPIO
   * 1x UART incl. fifo
 
-Improvement wishlist (in order of priority):
+## Improvement wishlist (in order of priority):
 * Exception raising on illegal instruction
 * JTAG tap for debug module
 * Making debug module consistent with RV spec to use openOCD
@@ -26,5 +26,7 @@ Improvement wishlist (in order of priority):
 * SPI APB slave
 * I2C APB slave
 * Switch to 64bit ISAs
+
+## Note
 
 This is more a project to get experience in HW design than anything else. Therefore (so far) everything is 100% written by myself instead of using already existing implementations.
