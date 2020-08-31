@@ -36,10 +36,8 @@
 -I../../ips/debug_module/includes
 
 ../../ips/timer_module/src/timer.sv
--I../../ips/timer_module/includes
 
 ../../ips/gpio_module/src/gpio_module.sv
--I../../ips/gpio_module/inc
 
 ../../ips/uart_module/src/uart_tx.sv
 ../../ips/uart_module/src/uart_rx.sv
