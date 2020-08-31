@@ -14,7 +14,7 @@ Quick overview:
 * APB slaves:
   * 1x Timer
   * 8x GPIO
-  * 1x UART
+  * 1x UART incl. fifo
 
 Improvement wishlist (in order of priority):
 * Exception raising on illegal instruction
@@ -26,3 +26,5 @@ Improvement wishlist (in order of priority):
 * SPI APB slave
 * I2C APB slave
 * Switch to 64bit ISAs
+
+This is more a project to get experience in HW design than anything else. Therefore (so far) everything is 100% written by myself instead of using already existing implementations.
