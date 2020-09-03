@@ -1,11 +1,12 @@
 module panda_wrapper (
   input wire              ext_clk_i,
-  input wire              ext_rst_i,
+  input wire              ext_rstn_i,
+  output wire             led_o,
   // DEBUG
   input wire              dbg_uart_rx_i,
   output wire             dbg_uart_tx_o,
   // GPIO
-  inout wire [7:0]        gpio_io,
+  // inout wire [7:0]        gpio_io,
   // UART
   input wire              uart_rx_i,
   output wire             uart_tx_o
@@ -15,18 +16,20 @@ wire [7:0] gpio_val_i;
 wire [7:0] gpio_val_o;
 wire [7:0] gpio_dir;
 
-for(genvar ii = 0; ii < 8; ii = ii + 1) begin : GPIO_IO_BUF
-  IOBUF iobuf_gpio(
-    .I  ( gpio_val_o[ii]  ),
-    .O  ( gpio_val_i[ii]  ),
-    .IO ( gpio_io[ii]     ),
-    .T  ( gpio_dir[ii]    )
-  );
-end
+assign led_o = dbg_uart_tx_o;
+
+// for(genvar ii = 0; ii < 8; ii = ii + 1) begin : GPIO_IO_BUF
+//   IOBUF iobuf_gpio(
+//     .I  ( gpio_val_o[ii]  ),
+//     .O  ( gpio_val_i[ii]  ),
+//     .IO ( gpio_io[ii]     ),
+//     .T  ( gpio_dir[ii]    )
+//   );
+// end
 
 xilinx_clocking_wizard clk_gen_i(
   .clk_in1    ( ext_clk_i   ),
-  .reset      ( ext_rst_i   ),
+  .reset      ( ~ext_rstn_i ),
   .locked     ( po_rstn     ),
   .clk_out1   ( sys_clk     )
 );

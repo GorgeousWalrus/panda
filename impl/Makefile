@@ -1,10 +1,10 @@
 default: batch
 
 batch: cleanall
-	vivado -mode batch -source tcl/run.tcl
+	vivado -mode batch -source tcl/run.tcl &
 
 gui: cleanall
-	vivado -mode gui -source tcl/run.tcl
+	vivado -mode gui -source tcl/run.tcl &
 
 cleanall: clean
 	rm -rf *.hw
@@ -12,6 +12,8 @@ cleanall: clean
 	rm -rf *.sim
 	rm -rf *.srcs
 	rm -rf *.xpr
+	rm -rf *.prm
+	rm -rf *.mcs
 	
 clean:
 	rm -rf vivado*

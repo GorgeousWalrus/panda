@@ -12,7 +12,7 @@ impl:
 
 .PHONY: test
 test:
-	make -C tests/rtl run
+	make -C tests/rtl all
 
 clean:
 	make -C impl clean

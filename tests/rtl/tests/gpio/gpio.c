@@ -5,10 +5,13 @@ int gpio(){
     volatile unsigned int *gpio_inv = (unsigned int*) 0x20001008;
     volatile unsigned int *gpio_inten = (unsigned int*) 0x2000100c;
     volatile unsigned int *gpio_int_t = (unsigned int*) 0x20001010;
+    volatile unsigned int *gpio_dbnc = (unsigned int*) 0x20001014;
 
 
     *gpio_dir = 0x0;
     *gpio_inv = 0x00;
+
+    *gpio_dbnc = 0x1;
 
     if(*gpio_val != 0)
         return 1;

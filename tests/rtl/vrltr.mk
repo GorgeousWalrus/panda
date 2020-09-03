@@ -34,18 +34,20 @@ VERILATOR_FLAGS += --assert
 # Generate coverage analysis
 VERILATOR_FLAGS += --coverage
 VERILATOR_FLAGS += --trace-structs
-# VERILATOR_FLAGS += --prefix top
+VERILATOR_FLAGS += --top-module testbench
+
+RTL_DEFINES =
+RTL_DEFINES += +define+RTL_TEST+1
 
 INCLUDE := $(shell cat common/sources.txt)
 
-VERILATOR_FLAGS += --top-module testbench
 
 ######################################################################
 default: run
 
 run:
 	@echo "-- VERILATE ----------------"
-	$(VERILATOR) $(VERILATOR_FLAGS) $(INCLUDE) common/sim_main.cpp
+	$(VERILATOR) $(VERILATOR_FLAGS) $(INCLUDE) $(RTL_DEFINES) common/sim_main.cpp
 
 	@echo
 	@echo "-- COMPILE -----------------"

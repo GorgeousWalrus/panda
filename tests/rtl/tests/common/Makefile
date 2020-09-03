@@ -6,23 +6,27 @@ RISCV_OBJDUMP_OPTS ?= -d
 CURRENT_TEST = $(addsuffix .c, $(notdir $(shell pwd)))
 VERILATOR_COVERAGE = $(VERILATOR_ROOT)/bin/verilator_coverage
 
-default: main
+default: runtest
+
+run: main
+	../../obj_dir/Vtestbench --trace > result.txt
+
+runtest: build run
 
 .PHONY: build
-build: clean
+build:
+	make -C ../../ rtl
+
+dirs:
 	@if [ ! -d "./build" ]; then mkdir build; fi
 	@if [ ! -d "./logs" ]; then mkdir logs; fi
 
-%: %.c build
-	make -C ../../ verilate 
+%: %.c dirs
 	riscv32-unknown-elf-gcc ../../common/crt.s $< $(CURRENT_TEST) $(RISCV_GCC_OPTS) -o build/$@ $(RISCV_LINK_OPTS)
 	@riscv32-unknown-elf-objdump $(RISCV_OBJDUMP_OPTS) build/$@ > build/$@.dmp
 	@riscv32-unknown-elf-objcopy -O binary build/$@ build/$@.bin
 	@hexdump build/$@.bin > build/main.hex.dmp
 	@python3 ../../common/hexlify.py
-	../../obj_dir/Vtestbench --trace > result.txt
-	# $(VERILATOR_COVERAGE) --annotate logs/annotated logs/coverage.dat
-	
 
 .PHONY: clean
 clean:

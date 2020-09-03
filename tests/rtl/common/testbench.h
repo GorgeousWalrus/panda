@@ -11,7 +11,7 @@ double sc_time_stamp () {       // Called by $time in Verilog
 }
 
 #define CLK_FREQ 50000000
-#define BAUDRATE 50000000
+#define BAUDRATE 1000000
 #define CLK_DIV CLK_FREQ/BAUDRATE
 
 template<class MODULE>	class TESTBENCH {
@@ -100,7 +100,7 @@ template<class MODULE>	class TESTBENCH {
 		// -----------------------------------------------------------
 
 		void baud_tick(){
-			for(int i = 0; i < CLK_DIV; i++) this->tick();
+			for(int i = 0; i < CLK_DIV+1; i++) this->tick();
 		}
 
 		void uart_send(int data){

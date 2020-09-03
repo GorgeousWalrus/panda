@@ -1,8 +1,17 @@
 TESTS = $(shell ./common/list_tests.py)
 
+default: all
+
+all: clean rtl sw run
+
+sw:
+	@for test in $(TESTS) ; do \
+		make -C tests/$$test main; \
+	done
+
 run:
 	@for test in $(TESTS) ; do \
-		make -C tests/$$test ; \
+		make -C tests/$$test run; \
 	done
 
 	@echo "\n\nRESULTS:"
@@ -12,7 +21,7 @@ run:
 		cat tests/$$test/result.txt ; \
 	done
 
-verilate:
+rtl:
 	make -f vrltr.mk
 
 clean:

@@ -2,14 +2,14 @@ PROJECT:=xilinx_clocking_wizard
 
 default: all
 
-all:
+all: clean
 	vivado -mode batch -source tcl/run.tcl
 	mkdir -p ip
 	cp ${PROJECT}.srcs/sources_1/ip/${PROJECT}/${PROJECT}_stub.v ./ip
 	cp ${PROJECT}.srcs/sources_1/ip/${PROJECT}/${PROJECT}.xci ./ip
 	cp ${PROJECT}.srcs/sources_1/ip/${PROJECT}/${PROJECT}.dcp ./ip
 
-gui:
+gui: clean
 	vivado -mode gui -source tcl/run_native.tcl
 	mkdir -p ip
 	cp ${PROJECT}.srcs/sources_1/ip/${PROJECT}/${PROJECT}_stub.v ./ip
