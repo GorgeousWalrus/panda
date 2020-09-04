@@ -11,7 +11,7 @@ double sc_time_stamp () {       // Called by $time in Verilog
 }
 
 #define CLK_FREQ 50000000
-#define BAUDRATE 1000000
+#define BAUDRATE 10000000
 #define CLK_DIV CLK_FREQ/BAUDRATE
 
 template<class MODULE>	class TESTBENCH {
@@ -137,27 +137,46 @@ template<class MODULE>	class TESTBENCH {
 			return data;
 		}
 
-		int dbg_uart_send(int data){
-			uart_send(data);
-			int ret = uart_receive();
-			if(ret != 0x1) return 1;
+		int dbg_uart_send(int data, int len){
+			this->baud_tick();
+			int parity = 0;
+			for(int i = 0; i < len; i++){
+				this->baud_tick();
+				this->m_core->dbg_uart_rx_i = 0;
+				this->baud_tick();
+				for(int j = 0; j < 8; j++){
+					this->m_core->dbg_uart_rx_i = ((data >> (8*i)) >> j) & 1;
+					parity = parity ^ (((data >> (8*i)) >> j) & 1);
+					this->baud_tick();
+				}
+				this->m_core->dbg_uart_rx_i = 1;
+			}
+			this->tick();
 			return 0;
 		}
 
-		int dbg_uart_read(){
-			int ret = uart_receive();
-			uart_send(0x1);
-			return ret;
+		int dbg_uart_read(int len){
+			int data = 0;
+			this->tick();
+			for(int i = 0; i < len;i ++){
+				while(this->m_core->dbg_uart_tx_o == 1) this->tick();
+				this->baud_tick();
+				for(int j = 0; j < 8; j++){
+					data = data | ((this->m_core->dbg_uart_tx_o << j) << (8*i));
+					this->baud_tick();
+				}
+			}
+			return data;
 		}
 
 		// Read from memory address (can also be a memory mapped
 		// slave of the wishbone bus)
 		int read_mem(int addr){
-			int data;
-			dbg_uart_send(0x80);
-			dbg_uart_send(addr);
-			data = dbg_uart_read();
-			if(dbg_uart_read() != 0x2)
+			int data = 0;
+			dbg_uart_send(0x80, 1);
+			dbg_uart_send(addr, 4);
+			data = dbg_uart_read(4);
+			if(dbg_uart_read(1) != 0xaa)
 				return -1;
 			return data;
 		}
@@ -165,10 +184,10 @@ template<class MODULE>	class TESTBENCH {
 		// Write to memory address (can also be a memory mapped
 		// slave of the wishbone bus)
 		int write_mem(int addr, int data){
-			dbg_uart_send(0xc0);
-			dbg_uart_send(addr);
-			dbg_uart_send(data);
-			if(dbg_uart_read() != 0x2)
+			dbg_uart_send(0xc0, 1);
+			dbg_uart_send(addr, 4);
+			dbg_uart_send(data, 4);
+			if(dbg_uart_read(1) != 0xaa)
 				return -1;
 			return 0;
 		}
@@ -176,44 +195,44 @@ template<class MODULE>	class TESTBENCH {
 		// Read from core registers
 		int read_reg(int reg){
 			int data;
-			dbg_uart_send(0x81);
-			dbg_uart_send(reg);
-			data = dbg_uart_read();
-			if(dbg_uart_read() != 0x2)
+			dbg_uart_send(0x81, 1);
+			dbg_uart_send(reg, 4);
+			data = dbg_uart_read(4);
+			if(dbg_uart_read(1) != 0xaa)
 				return -1;
 			return data;
 		}
 
 		// Write to core registers	
 		int write_reg(int reg, int data){
-			dbg_uart_send(0xc1);
-			dbg_uart_send(reg);
-			dbg_uart_send(data);
-			if(dbg_uart_read() != 0x2)
+			dbg_uart_send(0xc1, 1);
+			dbg_uart_send(reg, 4);
+			dbg_uart_send(data, 4);
+			if(dbg_uart_read(1) != 0xaa)
 				return -1;
 			return 0;
 		}
 
 		// Halt the core
 		int halt_core(){
-			dbg_uart_send(0x04);
-			if(dbg_uart_read() != 0x2)
+			dbg_uart_send(0x04, 1);
+			if(dbg_uart_read(1) != 0xaa)
 				return -1;
 			return 0;
 		}
 
 		// Resume the core
 		int resume_core(){
-			dbg_uart_send(0x05);
-			if(dbg_uart_read() != 0x2)
+			dbg_uart_send(0x05, 1);
+			if(dbg_uart_read(1) != 0xaa)
 				return -1;
 			return 0;
 		}
 
 		// Reset the core
 		int reset_core(){
-			dbg_uart_send(0x01);
-			if(dbg_uart_read() != 0x2)
+			dbg_uart_send(0x01, 1);
+			if(dbg_uart_read(1) != 0xaa)
 				return -1;
 			return 0;
 		}
@@ -221,33 +240,35 @@ template<class MODULE>	class TESTBENCH {
 		// Read the program counter
 		int read_pc(){
 			int data;
-			dbg_uart_send(0x82);
-			dbg_uart_send(0x0);
-			data = dbg_uart_read();
-			if(dbg_uart_read() != 0x2)
+			dbg_uart_send(0x82, 1);
+			dbg_uart_send(0x0, 4);
+			data = dbg_uart_read(4);
+			if(dbg_uart_read(1) != 0xaa)
 				return -1;
 			return data;
 		}
 
 		// Set the program counter
 		int set_pc(int pc){
-			dbg_uart_send(0xc2);
-			dbg_uart_send(0x0);
-			dbg_uart_send(pc);
-			if(dbg_uart_read() != 0x2)
+			dbg_uart_send(0xc2, 1);
+			dbg_uart_send(0x0, 4);
+			dbg_uart_send(pc, 4);
+			if(dbg_uart_read(1) != 0xaa)
 				return -1;
 			return 0;
 		}
 
 
-		void load_program(int program[4096], int len, int startAddr){
+		int load_program(int program[4096], int len, int startAddr){
 			this->halt_core();
 			for(int i = 0; i < len; i++){
-				this->write_mem(startAddr + 4*i, program[i]);
+				if(this->write_mem(startAddr + 4*i, program[i]) != 0)
+					return -1;
 			}
+			return 0;
 		}
 
-		void load_program(char* filename, int startAddr){
+		int load_program(char* filename, int startAddr){
 			int program[4096];
 			int instr_cnt = 0;
 			size_t len = 0;
@@ -270,16 +291,17 @@ template<class MODULE>	class TESTBENCH {
 			// Rest the core
 			this->reset();
 			// Halt the core
-			this->halt_core();
-			this->reset_core();
+			if(this->halt_core() != 0) return 1;
+			if(this->reset_core() != 0) return 2;
 			
 			// Load the program into memory
-			this->load_program(program, instr_cnt, startAddr);
+			if(this->load_program(program, instr_cnt, startAddr) != 0) return 3;
 
 			// Set core to start of program
-			this->set_pc(startAddr);
+			if(this->set_pc(startAddr) != 0) return 4;
 			// Start the program
-			this->resume_core();
+			if(this->resume_core() != 0) return 5;
+			return 0;
 		}
 
 		// Check a bunch of memory addresses for the expected results

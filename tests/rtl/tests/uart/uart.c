@@ -1,6 +1,6 @@
 #include "uart.h"
 
-#define N_TRNS 12
+#define N_TRNS 60
 
 int uart(){
     volatile int *uart_tx       = (int *) 0x20002000;
@@ -9,7 +9,7 @@ int uart(){
     volatile int *uart_ctrl     = (int *) 0x2000200c;
     volatile int *uart_status   = (int *) 0x20002010;
 
-    *uart_clk_div = 0x4;
+    *uart_clk_div = 0x16;
     *uart_ctrl |= (0x1 << 0); // enable tx
     *uart_ctrl |= (0x1 << 1); // enable rx
     

@@ -10,13 +10,17 @@ int main(int argc, char** argv, char** env) {
 
     tb = new TESTBENCH<Vtestbench>();
     tb->opentrace("logs/trace.vcd");
-
-    tb->load_program((char*) "main.hex", 0x0);
+    result = tb->load_program((char*) "main.hex", 0x0);
+    if(result != 0){
+        std::cout << result << std::endl;
+        exit(0);
+    }
 
     for(int i = 0; i < 50; i++){
         for(int j = 0; j < 10000; j++)
             tb->tick();
-        if(tb->read_mem(0x10007ff0) != 0)
+        result = tb->read_mem(0x10007ff0);
+        if(result != 0)
             break;
     }
 
@@ -24,7 +28,7 @@ int main(int argc, char** argv, char** env) {
     // in order to prevent reading a success if the memory was 
     // uninitialized (e.g. remains 0)
 
-    result = tb->read_mem(0x10007ff0) - 1;
+    result -= 1;
 
     // Cleanup
     tb->tick();
