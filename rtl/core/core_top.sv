@@ -32,6 +32,7 @@ module core_top #(
     input logic          clk,
     input logic          rstn_i,
     output logic         rst_reqn_o,
+    // output logic         halted_o,
 // IF-Memory
     wb_bus_t.master      IF_wb_bus,
 // MEM-Memory

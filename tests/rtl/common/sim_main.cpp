@@ -10,7 +10,7 @@ int main(int argc, char** argv, char** env) {
 
     tb = new TESTBENCH<Vtestbench>();
     tb->opentrace("logs/trace.vcd");
-    result = tb->load_program((char*) "main.hex", 0x0);
+    result = tb->load_program((char*) "main.hex", 0x14);
     if(result != 0){
         std::cout << result << std::endl;
         exit(0);

@@ -265,6 +265,10 @@ template<class MODULE>	class TESTBENCH {
 				if(this->write_mem(startAddr + 4*i, program[i]) != 0)
 					return -1;
 			}
+			for(int i = 0; i < len; i++){
+				if(this->read_mem(startAddr+4*i) != program[i])
+					return -1;
+			}
 			return 0;
 		}
 

@@ -10,67 +10,98 @@ class dbg_module():
     self.uart = serial.Serial(
       port    = tty,
       baudrate= baudrate,
-      parity  = serial.PARITY_ODD,
+      parity  = serial.PARITY_NONE,
       stopbits= serial.STOPBITS_ONE,
       bytesize= serial.EIGHTBITS,
       timeout = timeout
     )
 
-  def write(self, data):
-    self.uart.write(data)
-    ret = self.uart.read(size=4)
-    if(ret != 0x1):
-      return -1
-    return 0
-
-  def read(self):
-    ret = self.uart.read(size=4)
-    self.uart.write((0x1).to_bytes(4, 'little'))
-    return int(ret)
-
   def write_mem(self, addr, data):
-    self.write((0xc0).to_bytes(4, 'little'))
-    self.write(addr.to_bytes(4, 'little'))
-    self.write(data.to_bytes(4, 'little'))
-    if(self.read() != 0x2):
+    self.uart.write(0xc0.to_bytes(1,'little'))
+    self.uart.write(addr.to_bytes(4,'little'))
+    self.uart.write(data.to_bytes(4,'little'))
+    ack = self.uart.read(1)
+    while(ack == b''):
+      ack = self.uart.read(1)
+    if(ack != b'\xaa'):
       return -1
     return 0
 
   def read_mem(self, addr):
-    self.write((0x80).to_bytes(4, 'little'))
-    self.write(addr.to_bytes(4, 'little'))
-    data = self.read()
-    if(self.read() != 0x2):
-      return -1
-    return data
+    self.uart.write(0x80.to_bytes(1,'little'))
+    self.uart.write(addr.to_bytes(4,'little'))
+    ret = self.uart.read(size=4)
+    ack = self.uart.read(1)
+    while(ack == b''):
+      ack = self.uart.read(1)
+    if(ack != b'\xaa'):
+      return -1  
+    return ret
 
   def reset(self):
-    self.write((0x1).to_bytes(4, 'little'))
-    if(self.read() != 0x2):
+    self.uart.write((0x1).to_bytes(1, 'little'))
+    ack = self.uart.read(1)
+    while(ack == b''):
+      ack = self.uart.read(1)
+    if(ack != b'\xaa'):
       return -1
     return 0
 
   def halt(self):
-    self.write((0x4).to_bytes(4, 'little'))
-    if(self.read() != 0x2):
+    self.uart.write((0x4).to_bytes(1, 'little'))
+    ack = self.uart.read(1)
+    while(ack == b''):
+      ack = self.uart.read(1)
+    if(ack != b'\xaa'):
       return -1
     return 0
 
   def resume(self):
-    self.write((0x5).to_bytes(4, 'little'))
-    if(self.read() != 0x2):
+    self.uart.write((0x5).to_bytes(1, 'little'))
+    ack = self.uart.read(1)
+    while(ack == b''):
+      ack = self.uart.read(1)
+    if(ack != b'\xaa'):
       return -1
     return 0
 
   def set_pc(self, pc):
-    self.write((0xc2).to_bytes(4, 'little'))
-    self.write((0x0).to_bytes(4, 'little'))
-    self.write((pc).to_bytes(4, 'little'))
+    self.uart.write((0xc2).to_bytes(1, 'little'))
+    self.uart.write((0x0).to_bytes(4, 'little'))
+    self.uart.write((pc).to_bytes(4, 'little'))
+    ack = self.uart.read(1)
+    while(ack == b''):
+      ack = self.uart.read(1)
+    if(ack != b'\xaa'):
+      return -1
+    return 0
   
+  def get_pc(self):
+    self.uart.write((0x82).to_bytes(1, 'little'))
+    self.uart.write((0x0).to_bytes(4, 'little'))
+    ret = self.uart.read(size=4)
+    ack = self.uart.read(1)
+    while(ack == b''):
+      ack = self.uart.read(1)
+    if(ack != b'\xaa'):
+      return -1  
+    return ret
+
   def load_binary(self, filename, startAddr):
     program = open(filename, 'r')
+    i = startAddr
     for line in program:
-      self.write((line).to_bytes(4, 'little'))
+      self.write_mem(i, int(line,16))
+      i += 4
+    program.close()
+    program = open(filename, 'r')
+    i = startAddr
+    for line in program:
+      if(self.read_mem(i) != int(line,16).to_bytes(4,'little')):
+        return (i-startAddr)/4+1
+      i += 4
+    return 0
+
 
   def load_program(self, filename, startAddr):
     self.reset()
