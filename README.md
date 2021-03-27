@@ -1,7 +1,9 @@
 # PandaZero
-A RISC-V processor, destined to become a microcontroller!
+My very own RISC-V microcontroller.
 
-## Quick overview:
+This is a project to get experience in HW design, not meant to deliver any useful functionality. Therefore (so far) everything is 100% designed and written by myself instead of using already existing implementations.
+
+## Features:
 * RV32I ISA
 * 5 Stage Pipeline
 * L1 instruction cache
@@ -9,7 +11,7 @@ A RISC-V processor, destined to become a microcontroller!
 * Simple branch predictor (predict backward branches as taken)
 * Pipeline hazard detection & mitigation by HW via pipeline stalls
 * Debug module with UART tap (to be replaced with JTAG tap)
-* Core connected to wishbone bus
+* Core, memory and debug module connected to wishbone bus
 * Bridge from wishbone to APB bus
 * APB slaves:
   * 1x Timer
@@ -17,19 +19,16 @@ A RISC-V processor, destined to become a microcontroller!
   * 1x UART incl. fifo
 
 ## Improvement wishlist (in order of priority):
+* Improve caches (current version is probable cause for errors in FPGA implementation)
 * Exception raising on illegal instruction
 * JTAG tap for debug module
 * Making debug module consistent with RV spec to use openOCD
-* Improve critical path (caches)
 * Extension to RV32F ISA (floating point)
-* Simple out-of-order execution
 * SPI APB slave
 * I2C APB slave
+* Introducing priviledge levels
+* (Simple out-of-order execution)
 * Switch to 64bit ISAs
-
-## Note
-
-This is more a project to get experience in HW design than anything else. Therefore (so far) everything is 100% written by myself instead of using already existing implementations.
 
 ## How to use
 
@@ -45,6 +44,6 @@ For more information on the tests, please refer to the README.md in `tests/`.
 
 Currently, the FPGA implementation is configured for the Xilinx Artix 7 A100TI FPGA (xc7a100ti-csg324-1L). It can be run by `make impl` here, which will start Vivado and run all the required steps to produce a bitstream (tested with Vivado 2020).
 
-You can also run the implementation in batch mode by going into `impl/` and running `make` there.
+You can also run the implementation in batch mode by going into `impl/` and running `make` there (or `make gui` to run in GUI mode from there).
 
 The FPGA implementation of the core could not be completely verified, due to limited access to appropriate hardware.
