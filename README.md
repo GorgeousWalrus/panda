@@ -30,3 +30,21 @@ A RISC-V processor, destined to become a microcontroller!
 ## Note
 
 This is more a project to get experience in HW design than anything else. Therefore (so far) everything is 100% written by myself instead of using already existing implementations.
+
+## How to use
+
+### RTL Tests
+
+To run the RTL test suite, you can simply run `make rtltest` here, or go into the `tests/rtl/` folder and run `make` there.
+
+The RTL testsuite requires `verilator`.
+
+For more information on the tests, please refer to the README.md in `tests/`.
+
+### FPGA Implementation
+
+Currently, the FPGA implementation is configured for the Xilinx Artix 7 A100TI FPGA (xc7a100ti-csg324-1L). It can be run by `make impl` here, which will start Vivado and run all the required steps to produce a bitstream (tested with Vivado 2020).
+
+You can also run the implementation in batch mode by going into `impl/` and running `make` there.
+
+The FPGA implementation of the core could not be completely verified, due to limited access to appropriate hardware.

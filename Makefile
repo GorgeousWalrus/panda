@@ -1,4 +1,4 @@
-default: test
+default: rtltest
 
 .PHONY: ips
 ips: xilinx_clocking_wizard
@@ -10,7 +10,7 @@ xilinx_clocking_wizard:
 impl:
 	make -C impl gui
 
-.PHONY: test
+.PHONY: rtltest
 test:
 	make -C tests/rtl all
 
