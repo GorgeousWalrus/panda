@@ -1,7 +1,7 @@
 # PandaZero
 My very own RISC-V microcontroller.
 
-This is a project to get experience in HW design, not meant to deliver any useful functionality. Therefore (so far) everything is 100% designed and written by myself instead of using already existing implementations.
+This is mainly a project to get experience in HW design. Therefore everything is 100% designed and written by myself instead of using already existing implementations.
 
 ## Features:
 * RV32I ISA
